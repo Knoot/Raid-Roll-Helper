@@ -52,62 +52,64 @@ rollFrame:AddChild(frame)
 interface.rollFrame.rollBar = Ace:Create('SimpleGroup')
 local rollBar = interface.rollFrame.rollBar
 rollBar:SetLayout("List")
-rollBar:SetWidth(size.rollBarW)
+--rollBar:SetHeight(size.rollBarH)
+--rollBar:SetWidth(rollFrame.frame:GetWidth())
 rollFrame:AddChild(rollBar)
 
-interface.rollFrame.timer = Ace:Create('Label')
-local frame = interface.rollFrame.timer
+rollBar.timer = Ace:Create('Label')
+local frame = rollBar.timer
 frame:SetText('roll timer')
 frame:SetFont(settings.ruFont, 14)
+frame.label:SetJustifyH("CENTER")
 rollBar:AddChild(frame)
 
-interface.rollFrame.ico = Ace:Create('Icon')
-local frame = interface.rollFrame.ico
-frame:SetImageSize(size.rollBarW, size.rollBarW)
+rollBar.ico = Ace:Create('Icon')
+local frame = rollBar.ico
+frame:SetImageSize(size.rollBarH - 30, size.rollBarH - 30)
 frame:SetImage(134414)
 rollBar:AddChild(frame)
 
-interface.rollFrame.ilvls = Ace:Create('ScrollFrame')
-local frame = interface.rollFrame.ilvls
+rollBar.ilvls = Ace:Create('ScrollFrame')
+local frame = rollBar.ilvls
 frame:SetLayout("List")
-frame:SetWidth(size.rollBarW)
-frame:SetHeight(size.ilvlsH)
+frame:SetWidth(size.rollBarH)
+frame:SetHeight(size.rollBarH - 30)
 rollBar:AddChild(frame)
 
-interface.rollFrame.ilvls.items = Ace:Create('SimpleHTML')
-local frame = interface.rollFrame.ilvls.items
+rollBar.ilvls.items = Ace:Create('SimpleHTML')
+local frame = rollBar.ilvls.items
 frame:SetFont(settings.ruFont, 12)
 frame:SetFullWidth(true)
 frame:SetFullHeight(true)
 frame:SetText('<html><body><p>ilvls List</p><p>ilvls List</p><p>ilvls List</p><p>ilvls List</p><p>ilvls List</p><p>ilvls List</p><p>ilvls List</p><p>ilvls List</p><p>ilvls List</p><p>ilvls List</p><p>ilvls List</p><p>ilvls List</p><p>ilvls List</p><p>ilvls List</p></body></html>');
-interface.rollFrame.ilvls:AddChild(frame)
+rollBar.ilvls:AddChild(frame)
 
-interface.rollFrame.needBtn = Ace:Create('Icon')
-local frame = interface.rollFrame.needBtn
+rollBar.needBtn = Ace:Create('Icon')
+local frame = rollBar.needBtn
 frame:SetTooltip(L["Нужно"])
 frame.frame:SetSize(25,25)
 frame:SetImageSize(25, 25)
 frame:SetTex("Interface\\Buttons\\UI-GroupLoot-Dice-Up", "Interface\\Buttons\\UI-GroupLoot-Dice-Highlight", "Interface\\Buttons\\UI-GroupLoot-Dice-Down", "Interface\\Buttons\\UI-GroupLoot-Dice-Down")
 rollBar:AddChild(frame)
 
-interface.rollFrame.offSpecBtn = Ace:Create('Icon')
-local frame = interface.rollFrame.offSpecBtn
+rollBar.offSpecBtn = Ace:Create('Icon')
+local frame = rollBar.offSpecBtn
 frame.frame:SetSize(25,25)
 frame:SetImageSize(25, 25)
 frame:SetTooltip(L["На офф спек"])
 frame:SetTex("Interface\\Buttons\\UI-GroupLoot-Coin-Up", "Interface\\Buttons\\UI-GroupLoot-Coin-Highlight", "Interface\\Buttons\\UI-GroupLoot-Coin-Down", "Interface\\Buttons\\UI-GroupLoot-Coin-Down")
 rollBar:AddChild(frame)
 
-interface.rollFrame.transmogBtn = Ace:Create('Icon')
-local frame = interface.rollFrame.transmogBtn
+rollBar.transmogBtn = Ace:Create('Icon')
+local frame = rollBar.transmogBtn
 frame:SetTooltip(L["На трансмог"])
 frame.frame:SetSize(20,20)
 frame:SetImageSize(20, 20)
 frame:SetTex("Interface\\AddOns\\RaidRollHelper\\Textures\\inv_alchemy_potion_Up", "Interface\\AddOns\\RaidRollHelper\\Textures\\inv_alchemy_potion_Highlight", "Interface\\AddOns\\RaidRollHelper\\Textures\\inv_alchemy_potion_Down", "Interface\\AddOns\\RaidRollHelper\\Textures\\inv_alchemy_potion_Down")
 rollBar:AddChild(frame)
 
-interface.rollFrame.falseBtn = Ace:Create('Icon')
-local frame = interface.rollFrame.falseBtn
+rollBar.falseBtn = Ace:Create('Icon')
+local frame = rollBar.falseBtn
 frame:SetTooltip(L["Отказаться"])
 frame.frame:SetSize(20,20)
 frame:SetImageSize(20, 20)
@@ -117,8 +119,8 @@ rollBar:AddChild(frame)
 interface.rollFrame.rollResult = Ace:Create('ScrollFrame')
 local frame = interface.rollFrame.rollResult
 frame:SetLayout("Flow")
-frame:SetWidth(size.frameW - size.rollBarW - 40)
-frame:SetHeight(size.frameH - 30)
+frame:SetWidth(rollFrame.frame:GetWidth())
+frame:SetHeight(size.frameH - size.rollBarH - 43)
 rollFrame:AddChild(frame)
 
 interface.rollFrame.rollResult.result = Ace:Create('SimpleHTML')
@@ -291,23 +293,35 @@ frame:SetScript('OnEvent', function()
 	interface.rollFrame.closeButton:ClearAllPoints()
 	interface.rollFrame.closeButton:SetPoint("CENTER", interface.rollFrame.frame, "TOPRIGHT", -8, -8)
 	
-	interface.rollFrame.ico:ClearAllPoints()
-	interface.rollFrame.ico:SetPoint("TOPLEFT", interface.rollFrame.timer.frame, "BOTTOMLEFT", -5, -5)
+	rollBar:ClearAllPoints()
+	rollBar:SetPoint("TOPLEFT", interface.rollFrame.frame, "TOPLEFT", 15, -25)
 	
-	interface.rollFrame.rollBar:ClearAllPoints()
-	interface.rollFrame.rollBar:SetPoint("TOPLEFT", interface.rollFrame.frame, "TOPLEFT", 15, -20)
+	rollBar.timer:ClearAllPoints()
+	rollBar.timer:SetPoint("TOP", rollBar.frame, "TOP", 0, -(size.rollBarH-10))
 	
-	interface.rollFrame.offSpecBtn:ClearAllPoints()
-	interface.rollFrame.offSpecBtn:SetPoint("TOPLEFT", interface.rollFrame.needBtn.frame, "TOPRIGHT", 5, 0)
+	rollBar.ico:ClearAllPoints()
+	rollBar.ico:SetPoint("TOPLEFT", rollBar.frame, "TOPLEFT", -25, 0)
 	
-	interface.rollFrame.transmogBtn:ClearAllPoints()
-	interface.rollFrame.transmogBtn:SetPoint("TOPLEFT", interface.rollFrame.offSpecBtn.frame, "TOPRIGHT", 5, 0)
+	rollBar.ilvls:ClearAllPoints()
+	rollBar.ilvls:SetPoint("TOPLEFT", rollBar.ico.frame, "TOPRIGHT", -15, 0)
 	
-	interface.rollFrame.falseBtn:ClearAllPoints()
-	interface.rollFrame.falseBtn:SetPoint("TOPLEFT", interface.rollFrame.transmogBtn.frame, "TOPRIGHT", 5, 0)
+	rollBar.needBtn:ClearAllPoints()
+	rollBar.needBtn:SetPoint("LEFT", rollBar.ilvls.frame, "RIGHT", 0, 0)
+	
+	rollBar.offSpecBtn:ClearAllPoints()
+	rollBar.offSpecBtn:SetPoint("TOPLEFT", rollBar.needBtn.frame, "TOPRIGHT", 5, 0)
+	
+	rollBar.transmogBtn:ClearAllPoints()
+	rollBar.transmogBtn:SetPoint("TOPLEFT", rollBar.offSpecBtn.frame, "TOPRIGHT", 5, 0)
+	
+	rollBar.falseBtn:ClearAllPoints()
+	rollBar.falseBtn:SetPoint("TOPLEFT", rollBar.transmogBtn.frame, "TOPRIGHT", 5, 0)
 	
 	interface.rollFrame.rollResult:ClearAllPoints()
-	interface.rollFrame.rollResult:SetPoint("TOPRIGHT", interface.rollFrame.frame, "TOPRIGHT", -10, -22)
+	interface.rollFrame.rollResult:SetPoint("BOTTOMLEFT", interface.rollFrame.frame, "BOTTOMLEFT", 15, 10)
+	
+	
+	
 	
 	interface.easyRoll.ico:ClearAllPoints()
 	interface.easyRoll.ico:SetPoint("TOPLEFT", interface.easyRoll.frame, "TOPLEFT", 5, -15)
@@ -325,6 +339,9 @@ frame:SetScript('OnEvent', function()
 	interface.easyRoll.noBtn:SetPoint("TOPLEFT", interface.easyRoll.yesBtn.frame, "TOPRIGHT", 20, 0)
 	
 	interface.easyRoll:Hide()
+	
+	
+	
 	
 	winRoll.closeButton:ClearAllPoints()
 	winRoll.closeButton:SetPoint("BOTTOMRIGHT", winRoll.frame, "BOTTOMRIGHT", -10, 10)

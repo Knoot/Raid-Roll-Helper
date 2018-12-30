@@ -3,6 +3,7 @@ local fn=addon.functions
 local L = addon.L
 local interface = addon.interface
 local settings = addon.settings
+local size = settings.interface.size
 local color = settings.color
 local Prefix = settings.prefix
 local data = addon.data
@@ -305,7 +306,7 @@ end
 
 function fn:rollResultResize()
 	local frame = interface.rollFrame
-	frame.rollResult:SetWidth(frame.rollBar.frame:IsVisible() and frame.frame:GetWidth() - 20 - frame.rollBar.frame:GetWidth() - 8 or frame.frame:GetWidth() - 16 - 10)
+	frame.rollResult:SetHeight(frame.rollBar.frame:IsVisible() and size.frameH - size.rollBarH - 43 or size.frameH - 43)
 end
 
 function fn:debug(type, ...)
@@ -681,8 +682,7 @@ function fn:GetRoll(item, mode)	--	item = itemName(string), mode = rollMod(strin
 end
 
 function fn:updateIco(texture)
-	interface.rollFrame.ico:SetImage(texture)
-	--interface.rollFrame.ico:SetAllPoints()
+	interface.rollFrame.rollBar.ico:SetImage(texture)
 end
 
 function fn:dump(o)
@@ -903,7 +903,7 @@ function fn:upd_roll()
 					interface.rollFrame:Show();
 					interface.rollFrame.rollBar.frame:Show()
 				end
-				interface.rollFrame.timer:SetText(string.format(L["Осталось: %u сек"],math.ceil(item.endTime-GetTime())))
+				interface.rollFrame.rollBar.timer:SetText(string.format(L["Осталось: %u сек"],math.ceil(item.endTime-GetTime())))
 				
 				fn:updateIco(item.ico)
 				
@@ -916,8 +916,8 @@ function fn:upd_roll()
 					ilvls=ilvls..'<h1 align="center">'..fn:linkReplace(link, socket)..'</h1>'..'\n'
 				end
 			--	interface.ilvls - 8 strings
-				interface.rollFrame.ilvls.items:SetText('<html><body>'..ilvls..'</body></html>')
-				interface.rollFrame.ilvls.items.frame:SetScript('OnHyperlinkEnter',function(self,link)
+				interface.rollFrame.rollBar.ilvls.items:SetText('<html><body>'..ilvls..'</body></html>')
+				interface.rollFrame.rollBar.ilvls.items.frame:SetScript('OnHyperlinkEnter',function(self,link)
 					GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")
 					GameTooltip:SetHyperlink(link)
 				end)
@@ -927,42 +927,43 @@ function fn:upd_roll()
 					GameTooltip:SetHyperlink(link)
 				end)
 				interface.rollFrame.rollResult.result.frame:SetScript('OnHyperlinkLeave',function() GameTooltip:Hide() end)
-				interface.rollFrame.ilvls.items.frame:SetScript('OnHyperlinkLeave',function() GameTooltip:Hide() end)
+				interface.rollFrame.rollBar.ilvls.items.frame:SetScript('OnHyperlinkLeave',function() GameTooltip:Hide() end)
 				
-				interface.rollFrame.needBtn:SetDisabled(false)
-				interface.rollFrame.needBtn:SetCallback('OnClick', function()
+				interface.rollFrame.rollBar.needBtn:SetDisabled(false)
+				interface.rollFrame.rollBar.needBtn:SetCallback('OnClick', function()
 					item.hide=true
 					C_ChatInfo.SendAddonMessage(Prefix.addon, Prefix.roll.get.need..k, fn:RRH_msg_loc(item.test))
 					fn:upd_roll()
 				end)
-				interface.rollFrame.offSpecBtn:SetCallback('OnClick', function()
+				interface.rollFrame.rollBar.offSpecBtn:SetDisabled(false)
+				interface.rollFrame.rollBar.offSpecBtn:SetCallback('OnClick', function()
 					item.hide=true
 					C_ChatInfo.SendAddonMessage(Prefix.addon, Prefix.roll.get.offSpec..k, fn:RRH_msg_loc(item.test))
 					fn:upd_roll()
 				end)
-				interface.rollFrame.transmogBtn:SetDisabled(false)
-				interface.rollFrame.transmogBtn:SetCallback('OnClick', function()
+				interface.rollFrame.rollBar.transmogBtn:SetDisabled(false)
+				interface.rollFrame.rollBar.transmogBtn:SetCallback('OnClick', function()
 					item.hide=true
 					C_ChatInfo.SendAddonMessage(Prefix.addon, Prefix.roll.get.transmog..k, fn:RRH_msg_loc(item.test))
 					fn:upd_roll()
 				end)
-				interface.rollFrame.falseBtn:SetCallback('OnClick', function()
+				interface.rollFrame.rollBar.falseBtn:SetCallback('OnClick', function()
 					item.hide=true
 					fn:upd_roll() 
 				end)
 				isShow=true
 				
-				if not item.isTransmog or not fn:rollAccess(item, 'isTransmog') then interface.rollFrame.transmogBtn:SetDisabled(true) end
+				if not item.isTransmog or not fn:rollAccess(item, 'isTransmog') then interface.rollFrame.rollBar.transmogBtn:SetDisabled(true) end
 				
 				if item.lootSpec==1 then
-					interface.rollFrame.needBtn:SetDisabled(true)
+					interface.rollFrame.rollBar.needBtn:SetDisabled(true)
 				else
-					interface.rollFrame.needBtn:SetDisabled(false)
+					interface.rollFrame.rollBar.needBtn:SetDisabled(false)
 				end
 				if not fn:rollAccess(item, 'isOffSpec') then
-					interface.rollFrame.offSpecBtn:SetDisabled(true)
+					interface.rollFrame.rollBar.offSpecBtn:SetDisabled(true)
 				else
-					interface.rollFrame.offSpecBtn:SetDisabled(false)
+					interface.rollFrame.rollBar.offSpecBtn:SetDisabled(false)
 				end
 			end
 		end
