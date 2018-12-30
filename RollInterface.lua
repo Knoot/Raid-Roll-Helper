@@ -13,7 +13,7 @@ local Ace = LibStub("AceKGUI-3.0")
 
 interface.rollFrame = Ace:Create('Frame')
 local rollFrame = interface.rollFrame
---rollFrame:Hide()
+rollFrame:Hide()
 
 rollFrame:SetTitle("Raid Roll Helper")
 rollFrame:SetWidth(size.frameW)
