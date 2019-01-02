@@ -178,6 +178,7 @@ function fn:NewRoll(item, itemName, itemLevel, iconFileDataID, itemSubType, item
 	for i=1,#data.roll_list do
 		if data.roll_list[i][itemName]~=nil then exist=i;break; end
 	end
+	
 --	sender FILTER
 	if sender==settings.playerName and not DB.debug.solo and not DB.filters.seeMyRoll and not testRoll then
 		hide=true
@@ -190,17 +191,20 @@ function fn:NewRoll(item, itemName, itemLevel, iconFileDataID, itemSubType, item
 	local socket = (itemStats.EMPTY_SOCKET_PRISMATIC or 0)*settings.socketWeight
 	
 --	spec filter
-	for k,v in pairs(GetItemSpecInfo(item)) do
-		if v == spec then needState = 2; break end
-		for i=1, GetNumSpecializations() do
-			if GetSpecializationInfo(i) == v then needState = 1; break end
+	if GetItemSpecInfo(item) == nil then
+		needState = 2
+	else
+		for k,v in pairs(GetItemSpecInfo(item)) do
+			if v == spec then needState = 2; break end
+			for i=1, GetNumSpecializations() do
+				if GetSpecializationInfo(i) == v then needState = 1; break end
+			end
+		end
+		needState = itemEquipLoc == "INVTYPE_FINGER" and 2 or needState
+		if needState == 0 then 
+			hide = true
 		end
 	end
-	needState = itemEquipLoc == "INVTYPE_FINGER" and 2 or needState
-	if needState == 0 then 
-		hide = true
-	end
-	
 --	test Roll: always show, small time
 	if testRoll then
 		hide = false

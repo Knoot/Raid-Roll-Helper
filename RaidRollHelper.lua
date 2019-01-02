@@ -72,9 +72,10 @@ function RaidRollHelper:OnInitialize()
 	
 	DB = self.db.global
 	
-										--{		frames pos
-	DB.rollFrame=DB.rollFrame or nil	--
-	DB.easyRoll=DB.easyRoll or nil		--}
+	
+																			--{		frames pos
+	DB.rollFrame = type(DB.rollFrame) == 'table' and DB.rollFrame or nil	--
+	DB.easyRoll = type(DB.easyRoll) == 'table' and DB.easyRoll or nil		--}
 	
 	DB.addonSettings = type(DB.addonSettings) == 'table' and DB.addonSettings or {}
 	DB.addonSettings.winAlert = DB.addonSettings.winAlert == nil and true or DB.addonSettings.winAlert
