@@ -143,6 +143,7 @@ interface.rollFrame.rollResult:AddChild(frame)
 
 interface.easyRoll = Ace:Create('Frame')
 local frame = interface.easyRoll
+frame:clearFrame(true)
 frame:SetTitle('easy Roll')
 frame:SetWidth(size.easyRollW)
 frame:SetHeight(size.easyRollH)
@@ -245,6 +246,7 @@ end)
 
 interface.winRoll = Ace:Create('Frame')
 local winRoll = interface.winRoll
+winRoll:clearFrame(true)
 winRoll:SetTitle("Raid Roll Helper")
 winRoll:SetWidth(size.winRollW)
 winRoll:SetHeight(size.winRollH)

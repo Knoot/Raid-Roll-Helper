@@ -11,6 +11,7 @@ local Ace = LibStub("AceKGUI-3.0")
 interface.debug = {}
 interface.debug.DebugFrame = Ace:Create('Frame')
 local DebugFrame = interface.debug.DebugFrame
+DebugFrame:clearFrame(true)
 DebugFrame:SetTitle("Raid Roll Helper Debug")
 DebugFrame:SetWidth(size.frameW)
 DebugFrame:SetHeight(size.frameH)

@@ -163,8 +163,7 @@ local methods = {
 			self.sizer_s:Hide()
 			self.sizer_e:Hide()
 			
-			self.FrameBackdrop.edgeFile = ""
-			self.frame:SetBackdrop(FrameBackdrop)
+			self.frame:SetBackdrop(ClearBackdrop)
 		end
 	end,
 
@@ -188,6 +187,13 @@ Constructor
 local FrameBackdrop = {
 	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
 	edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+	tile = true, tileSize = 32, edgeSize = 32,
+	insets = { left = 8, right = 8, top = 8, bottom = 8 }
+}
+
+local ClearBackdrop = {
+	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+	edgeFile = "",
 	tile = true, tileSize = 32, edgeSize = 32,
 	insets = { left = 8, right = 8, top = 8, bottom = 8 }
 }
@@ -328,7 +334,7 @@ local function Constructor()
 		line2		= line2,
 		sizer_s		= sizer_s,
 		sizer_e		= sizer_e,
-		FrameBackdrop=FrameBackdrop,
+		ClearBackdrop=ClearBackdrop,
 		content     = content,
 		frame       = frame,
 		type        = Type

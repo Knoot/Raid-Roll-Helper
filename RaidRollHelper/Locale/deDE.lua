@@ -61,6 +61,9 @@ L["Разрешить роллить на офф спек"] = "Allow roll on off
 L["Отправить"] = "Send"
 L["Не отправлять"] = "Don't send"
 L["Заберите у %s"] = "Take away from %s"
+L["Оповещение о победе"] = "Win Alert"
+L["Показывать окно с оповещением о победе"] = "Show Win Alert Window"
+L["При получении добычи показывать окно с предложением выставить предмет на ролл"] = "When receiving loot, show a window with a proposal to put the item on the roll"
 
 -- print
 L["(На трансмог)"] = "(На трансмог)"
