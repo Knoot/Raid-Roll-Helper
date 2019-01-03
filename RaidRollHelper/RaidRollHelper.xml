@@ -1,0 +1,18 @@
+﻿<Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.blizzard.com/wow/ui/">
+	
+	<Script file="Libs\LibStub\LibStub.lua"/>
+	<Include file="Libs\AceAddon-3.0\AceAddon-3.0.xml"/>
+	<Include file="Libs\AceConsole-3.0\AceConsole-3.0.xml"/>
+	<Include file="Libs\AceDB-3.0\AceDB-3.0.xml"/>
+	<Include file="Libs\CallbackHandler-1.0\CallbackHandler-1.0.xml"/>
+	<Include file="Libs\AceEvent-3.0\AceEvent-3.0.xml"/>
+	<Include file="Libs\AceKGUI-3.0\AceKGUI-3.0.xml"/>
+	<Script file="init.lua"/>
+	<Include file="Locale\Locale.xml"/>
+	<Script file="functions.lua"/>
+	<Script file="addonSettings.lua"/>
+	<Script file="RollInterface.lua"/>
+	<Script file="debugSettings.lua"/>
+	<Script file="RaidRollHelper.lua"/>
+	
+</Ui>
