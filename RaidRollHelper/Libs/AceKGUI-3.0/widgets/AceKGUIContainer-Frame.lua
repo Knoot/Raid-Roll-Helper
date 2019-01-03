@@ -146,6 +146,39 @@ local methods = {
 		else
 			frame:SetPoint("CENTER")
 		end
+	end,
+
+	["isGroupFrame"] = function(self, val)
+		if val then
+			self.titlebg:Hide()
+			self.title:Hide()
+			self.titlebg_r:Hide()
+			self.titlebg_l:Hide()
+			self.closebutton:Hide()
+			self.statusbg:Hide()
+			self.statustext:Hide()
+			self.sizer_se:Hide()
+			self.line1:Hide()
+			self.line2:Hide()
+			self.sizer_s:Hide()
+			self.sizer_e:Hide()
+			
+			self.FrameBackdrop.edgeFile = ""
+			self.frame:SetBackdrop(FrameBackdrop)
+		end
+	end,
+
+	["clearFrame"] = function(self, val)
+		if val then
+			self.closebutton:Hide()
+			self.statusbg:Hide()
+			self.statustext:Hide()
+			self.sizer_se:Hide()
+			self.line1:Hide()
+			self.line2:Hide()
+			self.sizer_s:Hide()
+			self.sizer_e:Hide()
+		end
 	end
 }
 
@@ -182,28 +215,28 @@ local function Constructor()
 	frame:SetScript("OnMouseDown", Frame_OnMouseDown)
 
 	local closebutton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-	--[[closebutton:SetScript("OnClick", Button_OnClick)
+	closebutton:SetScript("OnClick", Button_OnClick)
 	closebutton:SetPoint("BOTTOMRIGHT", -27, 17)
 	closebutton:SetHeight(20)
 	closebutton:SetWidth(100)
-	closebutton:SetText(CLOSE)]]
+	closebutton:SetText(CLOSE)
 
 	local statusbg = CreateFrame("Button", nil, frame)
-	--[[statusbg:SetPoint("BOTTOMLEFT", 15, 15)
+	statusbg:SetPoint("BOTTOMLEFT", 15, 15)
 	statusbg:SetPoint("BOTTOMRIGHT", -132, 15)
 	statusbg:SetHeight(24)
 	statusbg:SetBackdrop(PaneBackdrop)
 	statusbg:SetBackdropColor(0.1,0.1,0.1)
 	statusbg:SetBackdropBorderColor(0.4,0.4,0.4)
 	statusbg:SetScript("OnEnter", StatusBar_OnEnter)
-	statusbg:SetScript("OnLeave", StatusBar_OnLeave)]]
+	statusbg:SetScript("OnLeave", StatusBar_OnLeave)
 
 	local statustext = statusbg:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-	--[[statustext:SetPoint("TOPLEFT", 7, -2)
+	statustext:SetPoint("TOPLEFT", 7, -2)
 	statustext:SetPoint("BOTTOMRIGHT", -7, 2)
 	statustext:SetHeight(20)
 	statustext:SetJustifyH("LEFT")
-	statustext:SetText("")]]
+	statustext:SetText("")
 
 	local titlebg = frame:CreateTexture(nil, "OVERLAY")
 	titlebg:SetTexture("Interface\\DialogFrame\\UI-DialogBox-Header")
@@ -235,7 +268,7 @@ local function Constructor()
 	titlebg_r:SetWidth(30)
 	titlebg_r:SetHeight(40)
 
-	--[[local sizer_se = CreateFrame("Frame", nil, frame)
+	local sizer_se = CreateFrame("Frame", nil, frame)
 	sizer_se:SetPoint("BOTTOMRIGHT")
 	sizer_se:SetWidth(25)
 	sizer_se:SetHeight(25)
@@ -273,7 +306,7 @@ local function Constructor()
 	sizer_e:SetWidth(25)
 	sizer_e:EnableMouse(true)
 	sizer_e:SetScript("OnMouseDown", SizerE_OnMouseDown)
-	sizer_e:SetScript("OnMouseUp", MoverSizer_OnMouseUp)]]
+	sizer_e:SetScript("OnMouseUp", MoverSizer_OnMouseUp)
 
 	--Container Support
 	local content = CreateFrame("Frame", nil, frame)
@@ -282,12 +315,22 @@ local function Constructor()
 
 	local widget = {
 		localstatus = {},
+		closebutton	= closebutton,
+		statusbg	= statusbg,
+		statustext  = statustext,
+		title		= title,
 		titletext   = titletext,
-		--statustext  = statustext,
 		titlebg     = titlebg,
+		titlebg_l	= titlebg_l,
+		titlebg_r	= titlebg_r,
+		sizer_se	= sizer_se,
+		line1		= line1,
+		line2		= line2,
+		sizer_s		= sizer_s,
+		sizer_e		= sizer_e,
+		FrameBackdrop=FrameBackdrop,
 		content     = content,
 		frame       = frame,
-		title		= title,
 		type        = Type
 	}
 	for method, func in pairs(methods) do

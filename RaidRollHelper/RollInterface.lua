@@ -13,9 +13,10 @@ local Ace = LibStub("AceKGUI-3.0")
 
 interface.rollFrame = Ace:Create('Frame')
 local rollFrame = interface.rollFrame
-rollFrame:Hide()
+--rollFrame:Hide()
 
 rollFrame:SetTitle("Raid Roll Helper")
+rollFrame:clearFrame(true)
 rollFrame:SetWidth(size.frameW)
 rollFrame:SetHeight(size.frameH)
 
@@ -49,11 +50,13 @@ frame:SetCallback('OnClick', function()
 end)
 rollFrame:AddChild(frame)
 
-interface.rollFrame.rollBar = Ace:Create('SimpleGroup')
+--interface.rollFrame.rollBar = Ace:Create('SimpleGroup')
+interface.rollFrame.rollBar = Ace:Create('Frame')
 local rollBar = interface.rollFrame.rollBar
+rollBar:isGroupFrame(true)
 rollBar:SetLayout("List")
---rollBar:SetHeight(size.rollBarH)
---rollBar:SetWidth(rollFrame.frame:GetWidth())
+rollBar:SetHeight(size.rollBarH)
+rollBar:SetWidth(rollFrame.frame:GetWidth() - 30)
 rollFrame:AddChild(rollBar)
 
 rollBar.timer = Ace:Create('Label')
@@ -297,7 +300,7 @@ frame:SetScript('OnEvent', function()
 	rollBar:SetPoint("TOPLEFT", interface.rollFrame.frame, "TOPLEFT", 15, -25)
 	
 	rollBar.timer:ClearAllPoints()
-	rollBar.timer:SetPoint("TOP", rollBar.frame, "TOP", 0, -(size.rollBarH-10))
+	rollBar.timer:SetPoint("BOTTOM", rollBar.frame, "BOTTOM", 0, 0)
 	
 	rollBar.ico:ClearAllPoints()
 	rollBar.ico:SetPoint("TOPLEFT", rollBar.frame, "TOPLEFT", -25, 0)
