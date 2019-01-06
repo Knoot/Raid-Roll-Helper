@@ -277,9 +277,9 @@ function fn:itemListDistribution(self, event, ...)	--	... -> prefix = parefixNam
 		fn:debug('getSetRoll', itemRoll, sender, prefix)
 		fn:rollSet(itemRoll, 'transmog')
 	elseif prefix==Prefix.version then
-		if version == 1 then return end
+		if version == 1 and sender==settings.playerName then return end
 		fn:debug('ver', (version<settings.version and color.red or color.green)..version..'|r', senderFULL)
-		if sender~=settings.playerName then return end
+		if sender==settings.playerName then return end
 		if settings.version>version and channel~='WHISPER' and not settings.beta then
 			C_ChatInfo.SendAddonMessage(Prefix.addon, Prefix.version..settings.version, 'WHISPER', senderFULL)
 		elseif settings.version<version then
