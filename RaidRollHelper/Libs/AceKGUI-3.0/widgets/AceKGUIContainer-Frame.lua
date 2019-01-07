@@ -148,7 +148,7 @@ local methods = {
 		end
 	end,
 
-	["isGroupFrame"] = function(self, val)
+	["isGroupFrame"] = function(self, val)		-- delete all interface
 		if val then
 			self.titlebg:Hide()
 			self.title:Hide()
@@ -167,7 +167,7 @@ local methods = {
 		end
 	end,
 
-	["clearFrame"] = function(self, val)
+	["clearFrame"] = function(self, val)		-- delete closeButton, statusBar, sizer
 		if val then
 			self.closebutton:Hide()
 			self.statusbg:Hide()
