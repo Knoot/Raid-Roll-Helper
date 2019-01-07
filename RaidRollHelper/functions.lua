@@ -316,12 +316,15 @@ end
 function fn:debug(type, ...)
 	local DB = DB.debug.MSG
 	local Addon = DB.types.message
+	
 	if type == 'fatalError' then
 		return fn:Print(color['green']..'Debug|r:('..color['red']..'fatalError|r)', color.red, ...)
-	elseif type == 'functions' and Addon.functions then
+	elseif type == 'functions' then
 		return fn:Print(color['green']..'Debug|r:('..color['red']..'function|r)', color.red, ...)
 	end
+	
 	if not DB.state then return end
+	
 	if type == 'newroll' and Addon.newroll  then
 		return fn:Print(color['green']..'Debug|r:('..color['blue']..'newroll|r)',...)
 	elseif type == 'getSetRoll' and Addon.getSetRoll then
