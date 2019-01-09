@@ -114,7 +114,7 @@ function fn:itemListNew(item, itemName, itemLevel, iconFileDataID, offSpec, tran
 	})
 	table.insert(data.roll_list[#data.roll_list][itemName].ilvls, {
 		sender = sender,
-		ilvl = itemLevel,
+		ilvl = itemLevel or 0,
 		Item_link = item,
 		socket = socket,
 		isTransmog = transmog,
@@ -248,7 +248,7 @@ function fn:itemListDistribution(self, event, ...)	--	... -> prefix = parefixNam
 				if id==itemID then
 					itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, iconFileDataID, itemSellPrice, itemClassID, itemSubClassID,bindType, expacID, itemSetID, isCraftingReagent = GetItemInfo(item)
 					if itemName == nil then
-						return fn:debug('fatalError', 'itemName == nil')
+						return fn:debug('fatalError', 'GET_ITEM_INFO_RECEIVED -> itemName == nil')
 					else
 						ITEM_INFO_RECEIVED:UnregisterEvent("GET_ITEM_INFO_RECEIVED")
 						fn:NewRoll(item, itemName, itemLevel, iconFileDataID, itemSubType, itemEquipLoc, offSpec, transmog, sender, endTime, testRoll)
@@ -589,7 +589,6 @@ function fn:showWinFrame(item)	--	item(table [maybe nil if #list>0])
 	local ico = type(item) == 'table' and select(10, GetItemInfo(item.Item_link)) or nil
 	if item ~= nil and ico ~= nil then table.insert(list, {link = item.Item_link, ico = ico, sender = item.sender}) end
 	if #list==0 then return end
-	local player = settings.playerName
 	interface.winRoll:Show()
 	interface.winRoll.ico.link = list[1].link
 	interface.winRoll.ico:SetImage(list[1].ico)
