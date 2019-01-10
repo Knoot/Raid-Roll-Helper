@@ -35,8 +35,9 @@ function KnootTableClass(tbl)
             l = l or 1
             if l>100 then return '100 level break' end
             for k,v in pairs(tbl) do
-                str = str.."\n"..string.rep("   ", l)..'['..k..']'.." = "
+                str = str.."\n"..string.rep('   ', l)..'['..k.."] = "
                 if type(v) == 'table' then
+					print('dump',k)
                     str = str..v:dump(l+1)
                 elseif type(v) == 'function' then
                     str = str..'function'
@@ -44,63 +45,52 @@ function KnootTableClass(tbl)
                     str = str..tostring(v)
                 end
             end
-            str = str..'\n'..string.rep("   ", l-1)..'}'
+            str = str..'\n'..string.rep('   ', l-1)..'}'
             return str
         end
     }
     
-	setmetatable(tbl, {
-        __index = setmetatable(
-            methods, {__newindex = function(t,k,v)
-            local function metatable(t)
-                t = KnootTableClass(t)
-                for k,v in pairs(t) do
-                    if type(v)=='table' then metatable(v) end
+    setmetatable(tbl, {
+        __index = methods,
+        __newindex = function(t, k, v)
+            local function meta(t)
+                if type (t)~='table' then return t end
+                KnootTableClass(t)
+				print('-subTable',k)
+                for k,v in pairs (t) do
+                    if type(v)=='table' then  meta(v) end
                 end
                 return t
             end
-            if type(v) == 'table' then
-                v=metatable(v)
-            end
 			
             rawset(t, k, v)
-        end}
-        ),
-        __newindex = function(t,k,v)
-            local function metatable(t)
-                t = KnootTableClass(t)
-                for k,v in pairs(t) do
-                    if type(v)=='table' then metatable(v) end
-                end
-                return t
-            end
-            if type(v) == 'table' then
-                v=metatable(v)
-            end
-			
-            rawset(t, k, v)
+            t = meta(t)
         end
     })
 
     return tbl
 end
-
-	--[[local t = KnootTableClass()
-	t:push(18,92,16)
-	t["Печать триумвирата"] = {1,2,{5}}
-	table.insert(t,{
-			['itemName']={
-				link = 'item',
-				ico = 'iconFileDataID',
-				need = {2},
-				offSpec = {4},
-				transmog = {1},
-				lootSpec = 'lootSpec',
-				isTransmog = 'isTransmog',
-				ilvls = {{},{},{}},
-				endTime = 'endTime',
-				hide = 'hide',
-				test = testRoll or false,
-			}
-		})
-	print(t:dump())]]
+--[[
+local t = KnootTableClass()
+t.test = 123
+t:push(7,14,{18,['test']={21,17}})
+t[3]['Печать Триумвирата'] = {123, 321}
+t["Печать триумвирата"] = {1,2,{5}}
+table.insert(t, {
+		['itemName']={
+			link = 'item',
+			ico = 'iconFileDataID',
+			need = {2},
+			offSpec = {4},
+			transmog = {1},
+			lootSpec = 'lootSpec',
+			isTransmog = 'isTransmog',
+			ilvls = {{},{},{}},
+			endTime = 'endTime',
+			hide = 'hide',
+			test = testRoll or false,
+		}
+	})
+table.insert(t, {15,21})
+t[#t+1]={15,21}
+print(t:dump())]]
