@@ -85,7 +85,7 @@ function KnootTableClass(tbl)
     return tbl
 end
 
-	local t = KnootTableClass()
+	--[[local t = KnootTableClass()
 	t:push(18,92,16)
 	t["Печать триумвирата"] = {1,2,{5}}
 	table.insert(t,{
@@ -103,4 +103,4 @@ end
 				test = testRoll or false,
 			}
 		})
-	print(t:dump())
+	print(t:dump())]]
