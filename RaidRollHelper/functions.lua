@@ -16,7 +16,6 @@ local ITEM_INFO_RECEIVED = CreateFrame('Frame')
 function fn:rollSet(item, Type)	--	item = playerName#itemName#roll(string), Type = rollType(string)
 	if type(item) ~= 'string' or  type(Type) ~= 'string' then return fn:debug('functions', 'rollSet(item(string|'..type(item)..') - playerName#itemName#roll, Type(string|'..type(Type)..') - rollType)') end
 	local i=0
-	--local name,itemName,ROLL=fn:split(item,'#')
 	local name,itemName,ROLL=('#'):split(item)
 --	GET i
 	for n=1,#data.roll_list do
@@ -60,7 +59,7 @@ function fn:updateItemList(item, itemLink, itemLevel, offSpec, transmog, sender,
 	
 	table.insert(item.ilvls, {
 		sender = sender,
-		ilvl = itemLevel-5,
+		ilvl = itemLevel,
 		Item_link = itemLink,
 		socket = socket,
 		isTransmog = transmog,
@@ -911,7 +910,6 @@ function fn:upd_roll()
 		for k,v in pairs(data.roll_list[i]) do
 			local item = data.roll_list[i][k]
 			if item.endTime < GetTime() then
-				--data.roll_list.curr = data.roll_list.curr == item and nil or data.roll_list.curr
 				return fn:deleteRoll(i)
 			elseif data.roll_list.curr ~= item and (data.roll_list.curr==nil or data.roll_list.curr.hide) then
 				if item.hide or (not fn:rollAccess(item, 'isTransmog') and not fn:rollAccess(item, 'isOffSpec') and item.lootSpec~=2) then break end
