@@ -495,13 +495,12 @@ math.progress = function(End, cur)
   return percentageDone>100 and 100 or percentageDone
 end
 
-math.round = function(val, precision)
-  if type(val)~='number' then return 0 end
-  precision = tonumber(precision) or 2
-  precision = 10^math.floor(math.abs(precision))
-  val = val*precision
-  val = ((val-math.floor(val))*10>=5 and math.ceil(val) or math.floor(val))/precision
-  return val
+math.round = function (val, decimal)
+  if (decimal) then
+    return math.floor( (val * 10^decimal) + 0.5) / (10^decimal)
+  else
+    return math.floor(val+0.5)
+  end
 end
 
 function fn:serverINITroll(itemName,sender, mode)	--	itemName(string) ,sender = playerName(string) , mode = rollMod(string)
@@ -779,24 +778,16 @@ function fn:comma_value(amount)
 	return formatted
 end
 
-function fn:round(val, decimal)
-	if (decimal) then
-		return math.floor( (val * 10^decimal) + 0.5) / (10^decimal)
-	else
-		return math.floor(val+0.5)
-	end
-end
-
 function fn:format_num(amount, decimal, prefix, neg_prefix)
 	local str_amount,	formatted, famount, remain
 
 	decimal = decimal or 2	-- default 2 decimal places
 	neg_prefix = neg_prefix or "-" -- default negative sign
 
-	famount = math.abs(round(amount,decimal))
+	famount = math.abs(math.round(amount,decimal))
 	famount = math.floor(famount)
 
-	remain = round(math.abs(amount) - famount, decimal)
+	remain = math.round(math.abs(amount) - famount, decimal)
 
 				-- comma to separate the thousands
 	formatted = comma_value(famount)
