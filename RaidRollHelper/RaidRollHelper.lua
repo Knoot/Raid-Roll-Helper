@@ -1,7 +1,3 @@
--- roll timer
-RRH_TICKER = C_Timer.NewTicker(1, function() fn:rollTimer() end)
-RRH_TICKER:Cancel()
-
 local addon = RAID_ROLL_HELPER
 local settings = addon.settings
 local Prefix = addon.settings.prefix
@@ -145,7 +141,6 @@ function Console:RaidRollHelperStart(str)
 --	if not armor or weapon
 	if not itemType == L["Доспехи"] and not itemType == L["Оружие"] then return fn:Print(L["Предмет не является частью экипировки"]) end
 	
-	--C_ChatInfo.SendAddonMessage(Prefix.addon, Prefix.roll.new..itemLink, fn:RRH_msg_loc())
 	local frame = interface.easyRoll.ico
 		frame:SetImage(iconFileDataID)
 		frame:SetCallback('OnEnter', function()

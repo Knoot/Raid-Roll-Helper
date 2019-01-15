@@ -16,12 +16,13 @@ local ITEM_INFO_RECEIVED = CreateFrame('Frame')
 function fn:rollSet(item, Type)	--	item = playerName#itemName#roll(string), Type = rollType(string)
 	if type(item) ~= 'string' or  type(Type) ~= 'string' then return fn:debug('functions', 'rollSet(item(string|'..type(item)..') - playerName#itemName#roll, Type(string|'..type(Type)..') - rollType)') end
 	local i=0
-	local name,itemName,ROLL=fn:split(item,'#')
+	--local name,itemName,ROLL=fn:split(item,'#')
+	local name,itemName,ROLL=('#'):split(item)
 --	GET i
 	for n=1,#data.roll_list do
 		if data.roll_list[n][itemName] then i=n;break end
 	end
-	if i==0 then return fn:debug('error', 'item i='..i..' not exist') end
+	if i==0 then return fn:debug('error', 'item '..itemName..' not exist') end
 	
 --	if double roll
 	local exist=false
@@ -40,21 +41,33 @@ function fn:rollSet(item, Type)	--	item = playerName#itemName#roll(string), Type
 	end
 end
 
-function fn:updateItemList(item, offSpec, transmog, sender, socket)	--	item = data.roll_list[n][itemName](table), offSpec = canOffSpecRoll(boolean), transmog = canTransmogRoll(boolean), sender = playerName(string), socket = socket(number)
-	if type(item) ~= 'table' or  type(offSpec) ~= 'boolean' or  type(transmog) ~= 'boolean' or type(sender) ~= 'string'  or type(socket) ~= 'number' then return fn:debug('functions', 'updateItemList(item(table|'..type(item)..') - item data, sender(string|'..type(sender)..') - playerName, socket(number|'..type(socket)..') - socketWeight)') end
+function fn:updateItemList(item, itemLink, itemLevel, offSpec, transmog, sender, socket)	--	item = data.roll_list[n][itemName](table), itemLevel(number), offSpec = canOffSpecRoll(boolean), transmog = canTransmogRoll(boolean), sender = playerName(string), socket = socket(number)
+	if type(item) ~= 'table' or  type(itemLink) ~= 'string'or  type(itemLevel) ~= 'number' or  type(offSpec) ~= 'boolean' or  type(transmog) ~= 'boolean' or type(sender) ~= 'string' or type(socket) ~= 'number' then
+		return fn:debug('functions', 'updateItemList('..
+		'item(table|'..type(item)..') - item data, '..
+		'itemLink(string|'..type(item)..') - item Link,'..
+		'itemLevel(number|'..type(itemLevel)..') - item Level, '..
+		'offSpec(boolean|'..type(offSpec)..') - can offspec roll, '..
+		'transmog(boolean|'..type(transmog)..') - can transmog roll, '..
+		'sender(string|'..type(sender)..') - playerName, '..
+		'socket(number|'..type(socket)..') - socketWeight'..
+		')') end
 	for i=1,#item.ilvls do
 		if item.ilvls[i].sender==sender then return end
 	end
 	
+	data.roll_list.curr=nil
+	
 	table.insert(item.ilvls, {
 		sender = sender,
-		ilvl = itemLevel,
-		Item_link = item,
+		ilvl = itemLevel-5,
+		Item_link = itemLink,
 		socket = socket,
 		isTransmog = transmog,
 		isOffSpec = offSpec,
 	})
 	item.endTime = GetTime() + settings.timeToRoll
+	item.startTime = GetTime()
 end
 
 function fn:isTransmogNotCollected(item)
@@ -108,6 +121,7 @@ function fn:itemListNew(item, itemName, itemLevel, iconFileDataID, offSpec, tran
 			isTransmog = isTransmog,
 			ilvls = {},
 			endTime = endTime,
+			startTime = GetTime(),
 			hide = hide,
 			test = testRoll or false,
 		}
@@ -122,9 +136,9 @@ function fn:itemListNew(item, itemName, itemLevel, iconFileDataID, offSpec, tran
 	})
 --	Print info new roll
 	if sender==settings.playerName then
-		fn:Print(string.format(L["Ролл был успешно отправлен. %s"],item))
+		fn:Print(L["Ролл был успешно отправлен. %s"]:format(item))
 	else
-		fn:Print(string.format(L["Новый ролл был отправлен. %s"],item))
+		fn:Print(L["Новый ролл был отправлен. %s"]:format(item))
 	end
 end
 
@@ -212,7 +226,7 @@ function fn:NewRoll(item, itemName, itemLevel, iconFileDataID, itemSubType, item
 	end
 	
 	if exist then	--	if double new_roll
-		fn:updateItemList(data.roll_list[exist][itemName], offSpec, transmog,sender, socket)
+		fn:updateItemList(data.roll_list[exist][itemName], item, itemLevel, offSpec, transmog,sender, socket)
 	else
 		fn:itemListNew(item, itemName, itemLevel, iconFileDataID, offSpec, transmog, hide, sender, endTime, socket, needState, itemEquipLoc, testRoll)
 	end
@@ -224,23 +238,24 @@ function fn:itemListDistribution(self, event, ...)	--	... -> prefix = parefixNam
 --	addon && addon_ver FILTER
 	if prefix~=Prefix.addon then return end
 	local senderFULL=sender
-	sender=fn:split(sender,'-')
+	--sender=fn:split(sender,'-')
+	sender=('-'):split(sender)
 	testRoll = testRoll==true and true or false
 	local offSpec, transmog
 	
-	prefix=fn:clearPrefix(msg)				-- prefix new_/get_/...
-	local item = fn:clearPrefix(msg,prefix)	-- MSG without prefix
+	prefix=msg:clearPrefix()				-- prefix new_/get_/...
+	local item = msg:clearPrefix(prefix)	-- MSG without prefix
 	local itemRoll, version = item, tonumber(item)
 	
-	item, offSpec, transmog = fn:split(item, ';')
+	item, offSpec, transmog = (';'):split(item)
 	local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, iconFileDataID, itemSellPrice, itemClassID, itemSubClassID,bindType, expacID, itemSetID, isCraftingReagent = GetItemInfo(item)
-	local itemID=tonumber(string.match(item,'item:([0-9]+):'))
+	local itemID=tonumber(item:match('item:([0-9]+):'))
 	if prefix==Prefix.roll.new then
 	fn:debug('newroll', prefix,item,channel,sender)
 		offSpec = offSpec == 1 and true or false
 		transmog = transmog == 1 and true or false
 		local lootSpecID = select(11, strsplit(':',  item))
-		item = string.gsub(item, lootSpecID, GetLootSpecialization() == 0 and GetSpecializationInfo(GetSpecialization()) or GetLootSpecialization())
+		item = item:gsub(lootSpecID, GetLootSpecialization() == 0 and GetSpecializationInfo(GetSpecialization()) or GetLootSpecialization())
 		local endTime = GetTime()+settings.timeToRoll
 		if itemName==nil then
 			ITEM_INFO_RECEIVED:RegisterEvent("GET_ITEM_INFO_RECEIVED")
@@ -364,16 +379,6 @@ function fn:Print(...)
 	print(...)
 end
 
-function fn:RRH_FRAME_stop_move()
-	interface.frame:StopMovingOrSizing()
-	local point, relativeTo,relativePoint, xOfs, yOfs = interface.frame:GetPoint(1)
-	RaidRollHelperDB.global.point=point
-	RaidRollHelperDB.global.relativeTo=relativeTo
-	RaidRollHelperDB.global.relativePoint=relativePoint
-	RaidRollHelperDB.global.xOfs=xOfs
-	RaidRollHelperDB.global.yOfs=yOfs
-end
-
 function fn:RRH_raid_list_update()
 	local newPlayer = #data.raid_list ~= GetNumGroupMembers(1) and true or false
 	for i=1,GetNumGroupMembers(1) do
@@ -423,9 +428,8 @@ function fn:RRH_raid_list_update()
 	end
 end
 
-function fn:declOfNum(number,Type)	--	number = count(number), Type = transformationType(string)
+function fn:declOfNum(number,Type)	--	number = count(number), Type = transformType(string)
 	if type(number) ~= 'number' or type(Type) ~= 'string' then return fn:debug('functions', 'declOfNum(number(number|'..type(number)..'),Type(string|'..type(Type)..'))') end
-    --number= type(number) == "number" and number or 0
     local cases = {[0]=3, [1]=1, [2]=2, [3]=2, [4]=2, [5]=3}
     local titles
 	if Type == 'player' then
@@ -444,10 +448,8 @@ function fn:findAddon()
 		for name,tab in pairs(data.raid_list)do
 			if tab.ver then
 				if not DB.yes[tab.ver] then DB.yes[tab.ver]={} end
-				--DB.yes[tab.ver][#DB.yes[tab.ver]+1]={['name']=name,['color']=color[tab.className]}
 				table.insert(DB.yes[tab.ver], {['name']=name,['color']=color[tab.className]})
 			else
-				--DB.no[#DB.no+1]={['name']=name,['color']=color[tab.className] or '|cffffffff'}
 				table.insert(DB.no, {['name']=name,['color']=color[tab.className] or '|cffffffff'})
 			end
 		end
@@ -461,13 +463,13 @@ function fn:findAddon()
 				str=str..names[i].color..names[i].name..'|r, '
 				count=count+1
 			end
-			str=string.gsub(str,', $', '\n')
+			str=str:gsub(', $', '\n')
 		end
 		for i=1,#DB.no do
 			withOUT_RRH=withOUT_RRH..DB.no[i].color..DB.no[i].name..'|r, '
 		end
-		withOUT_RRH=string.gsub(withOUT_RRH,', $','')
-		str=string.format(form,fn:declOfNum(count,'player'),str,#DB.no,withOUT_RRH)
+		withOUT_RRH=withOUT_RRH:gsub(', $','')
+		str=form:format(fn:declOfNum(count,'player'),str,#DB.no,withOUT_RRH)
 		fn:Print(str)
 end
 
@@ -479,26 +481,28 @@ function fn:newVerSound()
 	end
 end
 
-function fn:clearPrefix(str,prefix)	--	str = stringWithPrefix(string), prefix = stringForRemove(string)
-	if type(str) ~= 'string' then return fn:debug('functions', 'clearPrefix(str(string|'..type(str)..'),prefix(string[ maybe nil for get prefix]|'..type(prefix)..'))') end
+string.clearPrefix = function(str,prefix)	--	str = stringWithPrefix(string), prefix = stringForRemove(string)
+	if type(str) ~= 'string' or (type(prefix) ~= 'string' and prefix~=nil) then return fn:debug('functions', 'clearPrefix(str(string|'..type(str)..'),prefix(string[ maybe nil for get prefix]|'..type(prefix)..'))') end
 	if prefix==nil then
-		local prefix='^%w+_'
-		if string.find(str,prefix) then
-			str=string.match(str,prefix)
-			return str
-		else
-			return false
-		end
-	else
-		local _prefix='^'..prefix
-		if string.find(str,_prefix) then
-			str=string.gsub(str,_prefix,'')
-			return str
-		else
-			return false
-		end
+		prefix='^%w+_'
+		return str:find(prefix) and str:match(prefix) or false
 	end
-	
+	prefix='^'..prefix
+	return  str:find(prefix) and str:gsub(prefix,'') or false
+end
+
+math.progress = function(End, cur)
+  local percentageDone = cur*100/End
+  return percentageDone>100 and 100 or percentageDone
+end
+
+math.round = function(val, precision)
+  if type(val)~='number' then return 0 end
+  precision = tonumber(precision) or 2
+  precision = 10^math.floor(math.abs(precision))
+  val = val*precision
+  val = ((val-math.floor(val))*10>=5 and math.ceil(val) or math.floor(val))/precision
+  return val
 end
 
 function fn:serverINITroll(itemName,sender, mode)	--	itemName(string) ,sender = playerName(string) , mode = rollMod(string)
@@ -513,10 +517,22 @@ function fn:serverINITroll(itemName,sender, mode)	--	itemName(string) ,sender = 
 	end
 end
 
-function fn:startTimer()
+function fn:startTimer(stop)
 	fn:debug('companions', 'startTimer')
-	RRH_TICKER:Cancel()
-	RRH_TICKER = C_Timer.NewTicker(1, function() fn:rollTimer() end)
+	if stop then
+		addon.timer:Cancel()
+		addon.progressTimer:Cancel()
+		return
+	end
+	if addon.timer then addon.timer:Cancel() end
+	addon.timer = C_Timer.NewTicker(1, function() fn:rollTimer() end)
+	if addon.progressTimer then addon.progressTimer:Cancel() end
+	addon.progressTimer = C_Timer.NewTicker(0.01, function()
+		local item = data.roll_list.curr
+		if not item then return end
+		interface.rollFrame.rollBar.timer:SetMinMax(item.startTime, item.endTime)
+		interface.rollFrame.rollBar.timer:SetProgress(GetTime())
+	end)
 end
 
 function fn:ifItemExist(itemLink)	--	itemLink(string)
@@ -530,7 +546,9 @@ function fn:ifItemExist(itemLink)	--	itemLink(string)
 end
 
 function fn:deleteRoll(i)
-	table.remove(data.roll_list, 1)
+	table.remove(data.roll_list, i)
+	data.roll_list.curr=nil
+	fn:upd_roll()
 end
 
 function fn:sendWinner(itemName)	--	itemName(string)
@@ -592,7 +610,7 @@ function fn:showWinFrame(item)	--	item(table [maybe nil if #list>0])
 	interface.winRoll:Show()
 	interface.winRoll.ico.link = list[1].link
 	interface.winRoll.ico:SetImage(list[1].ico)
-	interface.winRoll.leader:SetText(string.format(L["Заберите у %s"], list[1].sender))
+	interface.winRoll.leader:SetText(L["Заберите у %s"]:format(list[1].sender))
 end
 
 function fn:printRolls(itemName)	--	itemName(string)
@@ -650,16 +668,13 @@ function fn:rollTimer()
 		fn:printRolls(item)
 	end
 	fn:upd_roll()
-	if #data.roll_list==0 then RRH_TICKER:Cancel();fn:upd_roll() end
+	if #data.roll_list==0 then fn:startTimer(true);fn:upd_roll() end
 end
 
 function fn:linkReplace(link, socket)	--	link = itemLink(string), socket = socketWeight(number)
 	if type(link) ~= 'string' or type(socket) ~= 'number' then return fn:debug('functions', 'linkReplace(link(string|'..type(link)..') - itemLink, socket(number|'..type(socket)..') - socket Weight)') end
-	local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, iconFileDataID, itemSellPrice, itemClassID, itemSubClassID,bindType, expacID, itemSetID, isCraftingReagent = GetItemInfo(link)
-	link=string.gsub(link,'\124','|')
-	link=string.gsub(link,itemName,itemLevel..(socket>0 and '*' or ''))
-	link=string.gsub(link,'|','\124')
-	return link
+	local itemName, _, _, itemLevel = GetItemInfo(link)
+	return link:gsub('\124','|'):gsub(itemName,itemLevel..(socket>0 and '*' or '')):gsub('|','\124')
 end
 
 function fn:randRoll(rolls)	--	rolls(table) = roll table
@@ -667,7 +682,8 @@ function fn:randRoll(rolls)	--	rolls(table) = roll table
 	local roll=math.random(1,100)
 	for i=1,#rolls do
 		if rolls[i]==roll then
-			roll=Roll(rolls)
+			roll=fn:randRoll(rolls)
+			break
 		end
 	end
 	return roll
@@ -711,7 +727,7 @@ function fn:split(inputstr, sep)
 	if sep == nil then sep = "%s" end
 	if not inputstr:find(sep) then return inputstr end
 	local t={}-- ; i=1
-	for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
+	for str in inputstr:gmatch("([^"..sep.."]+)") do
 		table.insert(t, tonumber(str)==nil and str or tonumber(str))
 		--[[t[i] = str
 		i = i + 1]]
@@ -724,7 +740,7 @@ function fn:makeHash(leng)
 		local text = "";
 		local possible = "abcdefghijklmnopqrstuvwxyzQWERTYUIOPASDFGHJKLZXCVBNM1234567890";
 		for i=0,leng do
-		local charAt=math.floor(math.random()*string.len(possible))
+		local charAt=math.floor(math.random()*possible:len())
 		text=text..possible:sub(charAt,charAt)
 	end
 		return text;
@@ -756,7 +772,7 @@ end
 function fn:comma_value(amount)
 	local formatted = amount
 	while true do	
-		formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", '%1,%2')
+		formatted, k = formatted:gsub("^(-?%d+)(%d%d%d)", '%1,%2')
 		if (k==0) then
 			break
 		end
@@ -788,9 +804,9 @@ function fn:format_num(amount, decimal, prefix, neg_prefix)
 
 				-- attach the decimal portion
 	if (decimal > 0) then
-		remain = string.sub(tostring(remain),3)
+		remain = tostring(remain):sub(3)
 		formatted = formatted .. "," .. remain ..
-								string.rep("0", decimal - string.len(remain))
+								("0"):rep( decimal - remain:len())
 	end
 
 				-- attach prefix string e.g '$' 
@@ -820,7 +836,7 @@ end
 
 function fn:needListUpdate()
 	local needListText='<html><body></body></html>'
-	local needList=''--string.match(needListText,"<body>(.*)</body>")
+	local needList=''--needListText:match("<body>(.*)</body>")
 	local exist=false
 	for i=1,#data.roll_list do
 		for k,v in pairs(data.roll_list[i]) do
@@ -887,29 +903,24 @@ end
 
 function fn:upd_roll()
 	if #data.roll_list==0 then
-		--[[interface.rollFrame.needBtn:SetCallback('OnClick', function() end)
-		interface.rollFrame.falseBtn:SetCallback('OnClick', function() end)
-		interface.rollFrame.offSpecBtn:SetCallback('OnClick', function() end)
-		interface.rollFrame.transmogBtn:SetCallback('OnClick', function() end)]]
 		interface.rollFrame.rollBar.frame:Hide()
 		GameTooltip:Hide()
 	end
-	local isDel=false
-	for i=1,#data.roll_list do
 		local isShow=false
-		if isDel then fn:upd_roll();break end
+	for i=1,#data.roll_list do
 		for k,v in pairs(data.roll_list[i]) do
 			local item = data.roll_list[i][k]
-			if item.endTime<GetTime()  then
-				fn:deleteRoll(i);isDel=true
-			else
+			if item.endTime < GetTime() then
+				--data.roll_list.curr = data.roll_list.curr == item and nil or data.roll_list.curr
+				return fn:deleteRoll(i)
+			elseif data.roll_list.curr ~= item and (data.roll_list.curr==nil or data.roll_list.curr.hide) then
 				if item.hide or (not fn:rollAccess(item, 'isTransmog') and not fn:rollAccess(item, 'isOffSpec') and item.lootSpec~=2) then break end
 				
+				data.roll_list.curr = item
 				if not settings.forceHide then
 					interface.rollFrame:Show();
 					interface.rollFrame.rollBar.frame:Show()
 				end
-				interface.rollFrame.rollBar.timer:SetText(string.format(L["Осталось: %u сек"],math.ceil(item.endTime-GetTime())))
 				
 				fn:updateIco(item.ico)
 				
@@ -923,17 +934,6 @@ function fn:upd_roll()
 				end
 			--	interface.ilvls - 8 strings
 				interface.rollFrame.rollBar.ilvls.items:SetText('<html><body>'..ilvls..'</body></html>')
-				interface.rollFrame.rollBar.ilvls.items.frame:SetScript('OnHyperlinkEnter',function(self,link)
-					GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")
-					GameTooltip:SetHyperlink(link)
-				end)
-				
-				interface.rollFrame.rollResult.result.frame:SetScript('OnHyperlinkEnter',function(self,link)
-					GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")
-					GameTooltip:SetHyperlink(link)
-				end)
-				interface.rollFrame.rollResult.result.frame:SetScript('OnHyperlinkLeave',function() GameTooltip:Hide() end)
-				interface.rollFrame.rollBar.ilvls.items.frame:SetScript('OnHyperlinkLeave',function() GameTooltip:Hide() end)
 				
 				interface.rollFrame.rollBar.needBtn:SetDisabled(false)
 				interface.rollFrame.rollBar.needBtn:SetCallback('OnClick', function()
@@ -971,18 +971,13 @@ function fn:upd_roll()
 				else
 					interface.rollFrame.rollBar.offSpecBtn:SetDisabled(false)
 				end
+			elseif not item.hide then
+				isShow = true
 			end
 		end
-		if isShow then
-			break
-		else
-			--[[interface.rollFrame.needBtn:SetCallback('OnClick', function() end)
-			interface.rollFrame.offSpecBtn:SetCallback('OnClick', function() end)
-			interface.rollFrame.transmogBtn:SetCallback('OnClick', function() end)
-			interface.rollFrame.falseBtn:SetCallback('OnClick', function() end)]]
+	end
+		if not isShow then
 			interface.rollFrame.rollBar.frame:Hide()
 		end
-		
-	end
 	fn:needListUpdate()
 end

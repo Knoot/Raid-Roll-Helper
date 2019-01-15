@@ -3,7 +3,7 @@ local function pack(...)
 end
 function KnootTableClass(tbl)
     local tbl = tbl or {}
-    
+
     local methods = {
         create = _create_instance,
         shift = function()
@@ -49,7 +49,7 @@ function KnootTableClass(tbl)
             return str
         end
     }
-    
+
     setmetatable(tbl, {
         __index = methods,
         __newindex = function(t, k, v)
@@ -62,7 +62,7 @@ function KnootTableClass(tbl)
                 end
                 return t
             end
-			
+
             rawset(t, k, v)
             t = meta(t)
         end
@@ -70,12 +70,12 @@ function KnootTableClass(tbl)
 
     return tbl
 end
---[[
-local t = KnootTableClass()
+
+--[[local t = KnootTableClass()
 t.test = 123
 t:push(7,14,{18,['test']={21,17}})
-t[3]['Печать Триумвирата'] = {123, 321}
-t["Печать триумвирата"] = {1,2,{5}}
+t[3]['���� �'] = {123, 321}
+t["���� �"] = {1,2,{5}}
 table.insert(t, {
 		['itemName']={
 			link = 'item',

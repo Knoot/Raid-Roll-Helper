@@ -37,6 +37,11 @@ local function SetFont(self, font, size)
 end
 local function Constructor()
 	local frame = CreateFrame("SimpleHTML",nil,UIParent)
+	frame:SetScript('OnHyperlinkEnter',function(self,link)
+		GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")
+		GameTooltip:SetHyperlink(link)
+	end)
+	frame:SetScript('OnHyperlinkLeave',function() GameTooltip:Hide() end)
 	local self = {}
 	self.type = Type
 	self.OnRelease = OnRelease

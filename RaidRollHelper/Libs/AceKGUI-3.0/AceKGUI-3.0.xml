@@ -26,4 +26,5 @@
 	<Script file="widgets\AceKGUIWidget-MultiLineEditBox.lua"/>
 	<Script file="widgets\AceKGUIWidget-Slider.lua"/>
 	<Script file="widgets\AceKGUIWidget-SimpleHTML.lua"/>
+	<Script file="widgets\AceKGUIWidget-ProgressBar.lua"/>
 </Ui>

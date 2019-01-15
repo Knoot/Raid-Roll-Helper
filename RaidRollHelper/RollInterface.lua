@@ -59,11 +59,12 @@ rollBar:SetHeight(size.rollBarH)
 rollBar:SetWidth(rollFrame.frame:GetWidth() - 30)
 rollFrame:AddChild(rollBar)
 
-rollBar.timer = Ace:Create('Label')
+rollBar.timer = Ace:Create('ProgressBar')
 local frame = rollBar.timer
-frame:SetText('roll timer')
+frame:SetPlaceholder(L["Осталось: %u сек"])
 frame:SetFont(settings.ruFont, 14)
-frame.label:SetJustifyH("CENTER")
+frame:SetType("time")
+frame:SetWidth(rollBar.frame:GetWidth())
 rollBar:AddChild(frame)
 
 rollBar.ico = Ace:Create('Icon')
@@ -300,6 +301,9 @@ frame:SetScript('OnEvent', function()
 	
 	rollBar:ClearAllPoints()
 	rollBar:SetPoint("TOPLEFT", interface.rollFrame.frame, "TOPLEFT", 15, -25)
+	
+	--rollBar.timer:ClearAllPoints()
+	--rollBar.timer:SetPoint("BOTTOM", rollBar.frame, "BOTTOM", 0, 0)
 	
 	rollBar.timer:ClearAllPoints()
 	rollBar.timer:SetPoint("BOTTOM", rollBar.frame, "BOTTOM", 0, 0)
