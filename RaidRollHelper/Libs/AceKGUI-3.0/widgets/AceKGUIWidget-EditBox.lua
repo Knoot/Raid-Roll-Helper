@@ -215,13 +215,11 @@ local function Constructor()
 	local num  = AceKGUI:GetNextWidgetNum(Type)
 	local frame = CreateFrame("Frame", nil, UIParent)
 	frame:Hide()
-	
-	frame.tooltip = ''
 
 	local editbox = CreateFrame("EditBox", "AceKGUI-3.0EditBox"..num, frame, "InputBoxTemplate")
 	editbox:SetAutoFocus(false)
 	editbox:SetFontObject(ChatFontNormal)
-	--editbox:SetScript("OnEnter", Control_OnEnter)
+	editbox:SetScript("OnEnter", Control_OnEnter)
 	editbox:SetScript("OnLeave", Control_OnLeave)
 	--editbox:SetScript("OnEscapePressed", EditBox_OnEscapePressed)
 	--editbox:SetScript("OnEnterPressed", EditBox_OnEnterPressed)
@@ -234,6 +232,8 @@ local function Constructor()
 	editbox:SetPoint("BOTTOMLEFT", 6, 0)
 	editbox:SetPoint("BOTTOMRIGHT")
 	editbox:SetHeight(19)
+	
+	editbox.tooltip = ''
 
 	local label = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
 	label:SetPoint("TOPLEFT", 0, -2)
