@@ -52,10 +52,16 @@ end
 Scripts
 -------------------------------------------------------------------------------]]
 local function Control_OnEnter(frame)
+	if frame.obj.tooltip ~= nil and frame.obj.tooltip ~= '' then
+		GameTooltip:SetOwner(frame, "ANCHOR_TOP")
+		GameTooltip:AddLine(frame.obj.tooltip)
+		GameTooltip:Show()
+	end
 	frame.obj:Fire("OnEnter")
 end
 
 local function Control_OnLeave(frame)
+	GameTooltip:Hide()
 	frame.obj:Fire("OnLeave")
 end
 
@@ -195,6 +201,10 @@ local methods = {
 		if not self.frame:IsShown() then
 			self.frame:SetScript("OnShow", Frame_OnShowFocus)
 		end
+	end,
+	
+	["SetTooltip"] = function(self, tooltip)
+		self.tooltip = tooltip
 	end
 }
 
@@ -205,6 +215,8 @@ local function Constructor()
 	local num  = AceKGUI:GetNextWidgetNum(Type)
 	local frame = CreateFrame("Frame", nil, UIParent)
 	frame:Hide()
+	
+	frame.tooltip = ''
 
 	local editbox = CreateFrame("EditBox", "AceKGUI-3.0EditBox"..num, frame, "InputBoxTemplate")
 	editbox:SetAutoFocus(false)
