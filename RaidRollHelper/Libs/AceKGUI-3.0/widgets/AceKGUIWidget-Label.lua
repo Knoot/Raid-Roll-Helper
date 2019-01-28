@@ -60,6 +60,17 @@ local function UpdateImageAnchor(self)
 	self.resizing = nil
 end
 
+local function Control_OnEnter(frame)
+	if frame.obj.tooltip ~= nil and frame.obj.tooltip ~= '' then
+		GameTooltip:SetOwner(frame, "ANCHOR_TOP")
+		GameTooltip:AddLine(frame.obj.tooltip)
+		GameTooltip:Show()
+	end
+end
+
+local function Control_OnLeave(frame)
+	GameTooltip:Hide()
+end
 --[[-----------------------------------------------------------------------------
 Methods
 -------------------------------------------------------------------------------]]
@@ -130,6 +141,10 @@ local methods = {
 		self.image:SetHeight(height)
 		UpdateImageAnchor(self)
 	end,
+	
+	["SetTooltip"] = function(self, tooltip)
+		self.tooltip = tooltip
+	end
 }
 
 --[[-----------------------------------------------------------------------------
@@ -138,6 +153,10 @@ Constructor
 local function Constructor()
 	local frame = CreateFrame("Frame", nil, UIParent)
 	frame:Hide()
+	frame:SetScript("OnEnter", Control_OnEnter)
+	frame:SetScript("OnLeave", Control_OnLeave)
+	
+	frame.tooltip = ''
 
 	local label = frame:CreateFontString(nil, "BACKGROUND", "GameFontHighlightSmall")
 	label:SetJustifyH("LEFT")
