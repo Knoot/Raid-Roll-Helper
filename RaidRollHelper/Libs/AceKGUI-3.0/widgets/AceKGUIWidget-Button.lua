@@ -23,10 +23,16 @@ local function Button_OnClick(frame, ...)
 end
 
 local function Control_OnEnter(frame)
+	if frame.obj.tooltip ~= nil and frame.obj.tooltip ~= '' then
+		GameTooltip:SetOwner(frame, "ANCHOR_TOP")
+		GameTooltip:AddLine(frame.obj.tooltip)
+		GameTooltip:Show()
+	end
 	frame.obj:Fire("OnEnter")
 end
 
 local function Control_OnLeave(frame)
+	GameTooltip:Hide()
 	frame.obj:Fire("OnLeave")
 end
 
@@ -55,6 +61,10 @@ local methods = {
 		else
 			self.frame:Enable()
 		end
+	end,
+	
+	["SetTooltip"] = function(self, tooltip)
+		self.tooltip = tooltip
 	end
 }
 
@@ -65,6 +75,8 @@ local function Constructor()
 	local name = "AceKGUI30Button" .. AceKGUI:GetNextWidgetNum(Type)
 	local frame = CreateFrame("Button", name, UIParent, "UIPanelButtonTemplate")
 	frame:Hide()
+	
+	frame.tooltip = ''
 
 	frame:EnableMouse(true)
 	frame:SetScript("OnClick", Button_OnClick)
