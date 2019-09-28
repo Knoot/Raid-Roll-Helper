@@ -1,6 +1,6 @@
 ﻿## Interface: 80100
 ## Title: RaidRollHelper
-## Version: #@project-revision@
+## Version: @project-revision@
 ## Author: Knoot
 ## SavedVariables: RaidRollHelperDB, RaidRollHelperDebug
 ## Notes: Аддон для ролла в рейдах с персонализированной добычей.
