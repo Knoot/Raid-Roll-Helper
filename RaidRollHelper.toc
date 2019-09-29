@@ -5,6 +5,4 @@
 ## SavedVariables: RaidRollHelperDB, RaidRollHelperDebug
 ## Notes: Аддон для ролла в рейдах с персонализированной добычей.
 ## DefaultState: enabled
-
-
 RaidRollHelper.xml
